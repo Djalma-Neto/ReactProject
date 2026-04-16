@@ -1,16 +1,65 @@
-# React + Vite
+# 🗓️ Mini Sistema de Agendamento
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema simples de agendamento de serviços com regras de negócio, desenvolvido com:
 
-Currently, two official plugins are available:
+- Backend: Laravel (API REST)
+- Frontend: React + Vite + Bootstrap
+- Banco: MySQL (via Docker)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+# 🚀 Funcionalidades
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Listar serviços
+- Inserir Serviços (admin default_password: 123456)
+- Criar agendamentos
+- Listar agendamentos
+- Excluir agendamentos
+- Validações:
+  - Horário comercial (08:00 às 18:00)
+  - Conflito de horários
+  - Campos obrigatórios
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# 🧱 Estrutura do Projeto
+
+---
+
+## ⚙️ docker (Configuração do banco (MySQL))
+
+### 📌 Requisitos
+
+- `docker-compose.yml`
+
+### Instalação
+```bash
+docker-compose up -d
+```
+
+## ⚙️ Backend (Laravel)
+### 📌 Requisitos
+- PHP 8+
+- Composer
+
+### Instalação
+```bash
+git clone https://github.com/Djalma-Neto/AgendamentoServicos.git
+cd AgendamentoServicos
+composer install
+cp .env.example .env
+php artisan key:generate
+npm run dev
+```
+## ⚙️ frontend (React App)
+### 📌 Requisitos
+- Node.js 22+
+- npm 10+
+
+### Instalação
+```bash
+git clone https://github.com/Djalma-Neto/ReactProject.git
+cd ReactProject
+npm install
+npm run dev
+```
