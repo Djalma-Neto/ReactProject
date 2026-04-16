@@ -1,10 +1,19 @@
 import { useEffect, useState } from "react";
+import * as bootstrap from "bootstrap";
 
 const API_URL = "http://127.0.0.1:8000/api";
 
 function App() {
   const [services, setServices] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem("user");
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [newService, setNewService] = useState({
+    name: "",
+    duration: "",
+  });
 
   const [form, setForm] = useState({
     customer_name: "",
@@ -12,10 +21,59 @@ function App() {
     date_time: "",
   });
 
+  const createService = async () => {
+    const res = await fetch(`${API_URL}/services`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-User-Role": user?.role || "",
+      },
+      body: JSON.stringify(newService),
+    });
+
+    if (!res.ok) {
+      alert("Erro ao criar serviço");
+      return;
+    }
+
+    // mensagem
+    alert("Serviço criado com sucesso!");
+    setNewService({ name: "", duration: "" });
+
+    loadServices();
+
+    // fecha modal
+    const modalEl = document.getElementById("serviceModal");
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    modal.hide();
+    setTimeout(() => {
+      document.querySelectorAll(".modal-backdrop").forEach((el) => el.remove());
+      document.body.classList.remove("modal-open");
+    }, 200);
+  };
+
   const loadAppointments = () => {
     fetch(`${API_URL}/appointments`)
       .then((res) => res.json())
       .then(setAppointments);
+  };
+
+  const handleLogin = () => {
+    const password = prompt("Digite a senha de admin:");
+
+    if (password === "123456") {
+      const userData = { role: "admin" };
+
+      setUser(userData);
+      localStorage.setItem("user", JSON.stringify(userData));
+    } else {
+      alert("Senha inválida");
+    }
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem("user");
   };
 
   const loadServices = () => {
@@ -78,6 +136,26 @@ function App() {
           <div className="card shadow">
             <div className="card-body">
               <h4 className="card-title mb-4">Novo Agendamento</h4>
+              <div className="d-flex justify-content-between mb-3">
+                {user ? (
+                  <>
+                    <span className="badge bg-success">
+                      Logado como {user.role}
+                    </span>
+
+                    <button
+                      className="btn btn-sm btn-outline-danger"
+                      onClick={logout}
+                    >
+                      Sair
+                    </button>
+                  </>
+                ) : (
+                  <button className="btn btn-dark" onClick={handleLogin}>
+                    Login Admin
+                  </button>
+                )}
+              </div>
 
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
@@ -91,8 +169,7 @@ function App() {
                   />
                 </div>
 
-                <div className="mb-3">
-                  <label className="form-label">Serviço</label>
+                <div className="d-flex gap-2">
                   <select
                     className="form-select"
                     value={form.service_id}
@@ -103,10 +180,20 @@ function App() {
                     <option value="">Selecione</option>
                     {services.map((s) => (
                       <option key={s.id} value={s.id}>
-                        {s.name} ({s.duration} min)
+                        {s.name}
                       </option>
                     ))}
                   </select>
+
+                  {user?.role === "admin" && (
+                    <button
+                      className="btn btn-success"
+                      data-bs-toggle="modal"
+                      data-bs-target="#serviceModal"
+                    >
+                      +
+                    </button>
+                  )}
                 </div>
 
                 <div className="mb-3">
@@ -181,6 +268,48 @@ function App() {
                     ))}
                 </ul>
               )}
+            </div>
+          </div>
+        </div>
+
+        <div className="modal fade" id="serviceModal" tabIndex="-1">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Novo Serviço</h5>
+                <button className="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+
+              <div className="modal-body">
+                <input
+                  className="form-control mb-2"
+                  placeholder="Nome"
+                  value={newService.name}
+                  onChange={(e) =>
+                    setNewService({ ...newService, name: e.target.value })
+                  }
+                />
+
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder="Duração (min)"
+                  value={newService.duration}
+                  onChange={(e) =>
+                    setNewService({ ...newService, duration: e.target.value })
+                  }
+                />
+              </div>
+
+              <div className="modal-footer">
+                <button className="btn btn-secondary" data-bs-dismiss="modal">
+                  Cancelar
+                </button>
+
+                <button className="btn btn-primary" onClick={createService}>
+                  Salvar
+                </button>
+              </div>
             </div>
           </div>
         </div>
