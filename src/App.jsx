@@ -159,7 +159,8 @@ function App() {
 
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <label className="form-label">Nome</label>
+                  <label className="form-label">Nome</label>{" "}
+                  <span className="text-danger">*</span>
                   <input
                     className="form-control"
                     value={form.customer_name}
@@ -169,35 +170,44 @@ function App() {
                   />
                 </div>
 
-                <div className="d-flex gap-2">
-                  <select
-                    className="form-select"
-                    value={form.service_id}
-                    onChange={(e) =>
-                      setForm({ ...form, service_id: e.target.value })
-                    }
-                  >
-                    <option value="">Selecione</option>
-                    {services.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.name}
-                      </option>
-                    ))}
-                  </select>
+                <div className="mb-3">
+                  <div className="mb-3">
+                    <label className="form-label mb-0">Serviço</label>
+                    <span className="text-danger">*</span>
+                  </div>
 
-                  {user?.role === "admin" && (
-                    <button
-                      className="btn btn-success"
-                      data-bs-toggle="modal"
-                      data-bs-target="#serviceModal"
+                  <div className="d-flex gap-2">
+                    <select
+                      className="form-select"
+                      value={form.service_id}
+                      onChange={(e) =>
+                        setForm({ ...form, service_id: e.target.value })
+                      }
                     >
-                      +
-                    </button>
-                  )}
+                      <option value="">Selecione</option>
+                      {services.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    {user?.role === "admin" && (
+                      <button
+                        className="btn btn-success"
+                        data-bs-toggle="modal"
+                        data-bs-target="#serviceModal"
+                      >
+                        +
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 <div className="mb-3">
-                  <label className="form-label">Data e Hora</label>
+                  <label className="form-label">
+                    Data e Hora <span className="text-danger">*</span>
+                  </label>
                   <input
                     type="datetime-local"
                     className="form-control"
@@ -280,36 +290,49 @@ function App() {
                 <button className="btn-close" data-bs-dismiss="modal"></button>
               </div>
 
-              <div className="modal-body">
-                <input
-                  className="form-control mb-2"
-                  placeholder="Nome"
-                  value={newService.name}
-                  onChange={(e) =>
-                    setNewService({ ...newService, name: e.target.value })
-                  }
-                />
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  createService();
+                }}
+              >
+                <div className="modal-body">
+                  <input
+                    className="form-control mb-2"
+                    placeholder="Nome"
+                    required
+                    value={newService.name}
+                    onChange={(e) =>
+                      setNewService({ ...newService, name: e.target.value })
+                    }
+                  />
 
-                <input
-                  type="number"
-                  className="form-control"
-                  placeholder="Duração (min)"
-                  value={newService.duration}
-                  onChange={(e) =>
-                    setNewService({ ...newService, duration: e.target.value })
-                  }
-                />
-              </div>
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder="Duração (min)"
+                    required
+                    value={newService.duration}
+                    onChange={(e) =>
+                      setNewService({ ...newService, duration: e.target.value })
+                    }
+                  />
+                </div>
 
-              <div className="modal-footer">
-                <button className="btn btn-secondary" data-bs-dismiss="modal">
-                  Cancelar
-                </button>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Cancelar
+                  </button>
 
-                <button className="btn btn-primary" onClick={createService}>
-                  Salvar
-                </button>
-              </div>
+                  <button type="submit" className="btn btn-primary">
+                    Salvar
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
