@@ -32,11 +32,6 @@ Sistema simples de agendamento de serviços com regras de negócio, desenvolvido
 
 - `docker-compose.yml`
 
-### Instalação
-```bash
-docker-compose up -d
-```
-
 ## ⚙️ Backend (Laravel)
 ### 📌 Requisitos
 - PHP 8+
@@ -46,10 +41,12 @@ docker-compose up -d
 ```bash
 git clone https://github.com/Djalma-Neto/AgendamentoServicos.git
 cd AgendamentoServicos
+docker-compose up -d
 composer install
 cp .env.example .env
 php artisan key:generate
-npm run dev
+php artisan migrate --seed
+php artisan serve
 ```
 ## ⚙️ frontend (React App)
 ### 📌 Requisitos
